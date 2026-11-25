@@ -27,7 +27,6 @@
       margin: 0 auto;
     }
 
-    /* Header Section */
     .header {
       text-align: center;
       margin-bottom: 32px;
@@ -59,7 +58,6 @@
       font-weight: 400;
     }
 
-    /* Form Controls */
     .form-group {
       margin-bottom: 22px;
     }
@@ -102,7 +100,6 @@
       resize: vertical;
     }
 
-    /* Star Rating */
     .rating-group {
       text-align: center;
       margin: 26px 0 24px 0;
@@ -147,7 +144,6 @@
       min-height: 18px;
     }
 
-    /* Submit Button */
     .submit-btn {
       width: 100%;
       background-color: #41a849;
@@ -163,12 +159,13 @@
       margin-top: 4px;
     }
 
-    .submit-btn:hover {
+    .submit-btn:hover:not(:disabled) {
       background-color: #36933e;
     }
 
-    .submit-btn:active {
-      transform: translateY(1px);
+    .submit-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .toast-msg {
@@ -194,7 +191,6 @@
       border: 1px solid #f8b4b4;
     }
 
-    /* Reviews List Section */
     .reviews-section {
       margin-top: 34px;
     }
@@ -228,24 +224,6 @@
       border: 1px solid #e2e8f0;
       padding: 4px 12px;
       border-radius: 999px;
-    }
-
-    .clear-btn {
-      background: none;
-      border: 1px solid #e2e8f0;
-      color: #64748b;
-      font-family: inherit;
-      font-size: 12.5px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .clear-btn:hover {
-      background: #f8fafc;
-      color: #dc2626;
-      border-color: #fecaca;
     }
 
     .reviews-list {
@@ -310,7 +288,7 @@
       <p>Бүгінгі ашық сабақ туралы өз әсеріңізбен және әдістемелік ұсынысыңызбен бөлісіңіз</p>
     </header>
 
-    <form id="feedbackForm" onsubmit="submitFeedback(event)">
+    <form id="feedbackForm">
       <div class="form-group">
         <label class="form-label" for="colleagueName">Аты-жөніңіз (қалауыңызша):</label>
         <input
@@ -342,7 +320,7 @@
         ></textarea>
       </div>
 
-      <button type="submit" class="submit-btn">Кері байланысты жіберу</button>
+      <button type="submit" class="submit-btn" id="submitBtn">Кері байланысты жіберу</button>
       <div class="toast-msg" id="toastMsg"></div>
     </form>
 
@@ -351,15 +329,34 @@
         <h2>Әріптестердің пікірлері:</h2>
         <div class="reviews-meta">
           <span class="count-chip" id="reviewsCount">Барлығы: 0 пікір</span>
-          <button type="button" class="clear-btn" onclick="clearAllReviews()">Тазалау</button>
         </div>
       </div>
       <div class="reviews-list" id="reviewsList"></div>
     </section>
   </div>
 
-  <script>
-    const STORAGE_KEY = 'fizika_8_electrification_colleague_feedback_v1';
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      orderBy,
+      serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCPerbz5nWsWizN7UHs3-UNDveZR-THXxg",
+      authDomain: "fizika-8-refleksiya-18d5b.firebaseapp.com",
+      projectId: "fizika-8-refleksiya-18d5b",
+      storageBucket: "fizika-8-refleksiya-18d5b.firebasestorage.app",
+      messagingSenderId: "881925256637",
+      appId: "1:881925256637:web:8d5c16361b858d03970ed4"
+    };
+
+    const COLLECTION_NAME = 'fizika_8_colleague_feedbacks';
     const RATING_LABELS = {
       1: '1 / 5 — Төмен',
       2: '2 / 5 — Орташадан төмен',
@@ -367,6 +364,9 @@
       4: '4 / 5 — Өте жақсы',
       5: '5 / 5 — Керемет әсер алдым!'
     };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     let selectedRating = 0;
 
@@ -391,69 +391,75 @@
       });
     }
 
-    function loadReviews() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveReviews(list) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      } catch (e) {}
-    }
-
     function escapeHTML(str) {
-      return str
+      return String(str || '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
     }
 
-    function renderReviews() {
-      const reviews = loadReviews();
-      const listEl = document.getElementById('reviewsList');
-      const countEl = document.getElementById('reviewsCount');
-
-      countEl.textContent = `Барлығы: ${reviews.length} пікір`;
-
-      if (reviews.length === 0) {
-        listEl.innerHTML = '<div class="empty-state">Әзірге пікірлер жазылмады. Бірінші болып өз әсеріңізбен бөлісіңіз!</div>';
-        return;
+    function formatTime(createdAt, fallbackTime) {
+      if (createdAt && typeof createdAt.toDate === 'function') {
+        const d = createdAt.toDate();
+        return d.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) +
+          ' • ' + d.toLocaleDateString('kk-KZ');
       }
-
-      listEl.innerHTML = reviews.map(item => {
-        const starsStr = item.rating > 0
-          ? '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating)
-          : '';
-        return `
-          <article class="review-card">
-            <div class="review-top">
-              <span class="review-author">${escapeHTML(item.name)}</span>
-              ${starsStr ? `<span class="review-stars">${starsStr}</span>` : ''}
-            </div>
-            <div class="review-body">${escapeHTML(item.text)}</div>
-            <div class="review-time">${escapeHTML(item.time)}</div>
-          </article>
-        `;
-      }).join('');
+      return fallbackTime || '';
     }
 
     function showToast(message, isError = false) {
       const toast = document.getElementById('toastMsg');
       toast.textContent = message;
       toast.className = `toast-msg ${isError ? 'error' : 'success'}`;
+      toast.style.display = 'block';
       setTimeout(() => {
         toast.style.display = 'none';
         toast.className = 'toast-msg';
       }, 3500);
     }
 
-    function submitFeedback(e) {
+    async function renderReviews() {
+      const listEl = document.getElementById('reviewsList');
+      const countEl = document.getElementById('reviewsCount');
+
+      try {
+        const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        const reviews = snapshot.docs.map(doc => doc.data());
+
+        countEl.textContent = `Барлығы: ${reviews.length} пікір`;
+
+        if (reviews.length === 0) {
+          listEl.innerHTML = '<div class="empty-state">Әзірге пікірлер жазылмады. Бірінші болып өз әсеріңізбен бөлісіңіз!</div>';
+          return;
+        }
+
+        listEl.innerHTML = reviews.map(item => {
+          const ratingVal = Number(item.rating) || 0;
+          const starsStr = ratingVal > 0
+            ? '★'.repeat(ratingVal) + '☆'.repeat(5 - ratingVal)
+            : '';
+          return `
+            <article class="review-card">
+              <div class="review-top">
+                <span class="review-author">${escapeHTML(item.name || 'Әріптес мұғалім')}</span>
+                ${starsStr ? `<span class="review-stars">${starsStr}</span>` : ''}
+              </div>
+              <div class="review-body">${escapeHTML(item.text || '')}</div>
+              <div class="review-time">${escapeHTML(formatTime(item.createdAt, item.timeText))}</div>
+            </article>
+          `;
+        }).join('');
+      } catch (err) {
+        listEl.innerHTML = '<div class="empty-state">Пікірлерді жүктеу кезінде қате шықты. Firestore базасы құрылғанын және ережелерін тексеріңіз.</div>';
+      }
+    }
+
+    const form = document.getElementById('feedbackForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const nameInput = document.getElementById('colleagueName');
       const textInput = document.getElementById('feedbackText');
@@ -467,37 +473,9 @@
         return;
       }
 
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Жіберілуде...';
+
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) +
-        ' • ' + now.toLocaleDateString('kk-KZ');
-
-      const reviews = loadReviews();
-      reviews.unshift({
-        name,
-        rating: selectedRating,
-        text,
-        time: timeStr
-      });
-      saveReviews(reviews);
-
-      nameInput.value = '';
-      textInput.value = '';
-      selectedRating = 0;
-      highlightStars(0);
-      document.getElementById('ratingCaption').textContent = '';
-
-      renderReviews();
-      showToast('Рақмет! Сіздің кері байланысыңыз сәтті қосылды.');
-    }
-
-    function clearAllReviews() {
-      const reviews = loadReviews();
-      if (reviews.length === 0) return;
-      localStorage.removeItem(STORAGE_KEY);
-      renderReviews();
-    }
-
-    renderReviews();
-  </script>
-</body>
-</html>
+      const timeText = now.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) +
+        ' • ' + now.to
