@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Рефлексия • 8-сынып Физика</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8-сынып физика — Рефлексия</title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,489 +12,300 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
       color: #1e293b;
-      line-height: 1.5;
-      padding: 40px 20px 64px 20px;
+      line-height: 1.6;
+      padding: 24px 16px;
     }
 
     .container {
-      max-width: 780px;
+      max-width: 720px;
       margin: 0 auto;
-    }
-
-    /* Header Section */
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    .lesson-pill {
-      display: inline-block;
-      background-color: #f1f5f9;
-      color: #334155;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       border: 1px solid #e2e8f0;
-      font-size: 13.5px;
-      font-weight: 700;
-      padding: 5px 14px;
-      border-radius: 999px;
-      margin-bottom: 12px;
     }
 
-    .header h1 {
-      font-size: clamp(26px, 3.2vw, 34px);
-      font-weight: 800;
-      color: #243b53;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-    }
-
-    .header p {
-      font-size: 15.5px;
-      color: #7b8794;
-      font-weight: 400;
-    }
-
-    /* Form Controls */
-    .form-group {
-      margin-bottom: 22px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 15px;
-      font-weight: 700;
-      color: #243b53;
-      margin-bottom: 8px;
-    }
-
-    .text-input,
-    .textarea-input {
-      width: 100%;
-      font-family: inherit;
-      font-size: 15px;
-      color: #102a43;
-      background-color: #ffffff;
-      border: 1.5px solid #d9e2ec;
-      border-radius: 8px;
-      padding: 12px 14px;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
-      outline: none;
-    }
-
-    .text-input::placeholder,
-    .textarea-input::placeholder {
-      color: #9fb3c8;
-    }
-
-    .text-input:focus,
-    .textarea-input:focus {
-      border-color: #38a169;
-      box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.14);
-    }
-
-    .textarea-input {
-      min-height: 112px;
-      resize: vertical;
-    }
-
-    /* Star Rating */
-    .rating-group {
-      text-align: center;
-      margin: 26px 0 24px 0;
-    }
-
-    .rating-group .form-label {
-      text-align: left;
-      margin-bottom: 14px;
-    }
-
-    .stars-row {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .star-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 2px;
-      font-size: 32px;
-      line-height: 1;
-      color: #cbd2d9;
-      transition: transform 0.14s ease, color 0.14s ease;
-    }
-
-    .star-btn:hover {
-      transform: scale(1.14);
-    }
-
-    .star-btn.active {
-      color: #f6ad55;
-    }
-
-    .rating-caption {
-      margin-top: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #627d98;
-      min-height: 18px;
-    }
-
-    /* Submit Button */
-    .submit-btn {
-      width: 100%;
-      background-color: #41a849;
-      color: #ffffff;
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 700;
-      border: none;
-      border-radius: 8px;
-      padding: 14px 20px;
-      cursor: pointer;
-      transition: background-color 0.16s ease, transform 0.1s ease;
-      margin-top: 4px;
-    }
-
-    .submit-btn:hover {
-      background-color: #36933e;
-    }
-
-    .submit-btn:active {
-      transform: translateY(1px);
-    }
-
-    .toast-msg {
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      display: none;
-    }
-
-    .toast-msg.success {
-      display: block;
-      background-color: #def7ec;
-      color: #03543f;
-      border: 1px solid #84e1bc;
-    }
-
-    .toast-msg.error {
-      display: block;
-      background-color: #fde8e8;
-      color: #9b1c1c;
-      border: 1px solid #f8b4b4;
-    }
-
-    /* Reviews List Section */
-    .reviews-section {
-      margin-top: 34px;
-    }
-
-    .reviews-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .reviews-header h2 {
-      font-size: 19px;
-      font-weight: 800;
+    h1 {
+      font-size: 1.6rem;
       color: #0f172a;
+      margin-bottom: 8px;
     }
 
-    .reviews-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .subtitle {
+      font-size: 0.95rem;
+      color: #475569;
+      margin-bottom: 24px;
     }
 
-    .count-chip {
-      font-size: 13px;
-      font-weight: 700;
-      color: #334155;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      padding: 4px 12px;
-      border-radius: 999px;
+    .question-block {
+      margin-bottom: 20px;
     }
 
-    .clear-btn {
-      background: none;
-      border: 1px solid #e2e8f0;
-      color: #64748b;
-      font-family: inherit;
-      font-size: 12.5px;
+    label {
+      display: block;
       font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .clear-btn:hover {
-      background: #f8fafc;
-      color: #dc2626;
-      border-color: #fecaca;
-    }
-
-    .reviews-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .review-card {
-      background-color: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-left: 4px solid #41a849;
-      border-radius: 8px;
-      padding: 14px 16px;
-    }
-
-    .review-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-
-    .review-author {
-      font-size: 15px;
-      font-weight: 700;
+      margin-bottom: 8px;
       color: #1e293b;
     }
 
-    .review-stars {
-      color: #f6ad55;
-      font-size: 15px;
-      letter-spacing: 1px;
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #ffffff;
+      color: #0f172a;
     }
 
-    .review-body {
-      font-size: 14.5px;
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .mood-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mood-btn {
+      flex: 1 1 120px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #1e293b;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mood-btn:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .mood-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #16a34a;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background: #15803d;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .message.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .message.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .history-section {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .history-section h2 {
+      font-size: 1.15rem;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    .entry-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+    }
+
+    .entry-meta {
+      font-weight: 600;
       color: #334155;
-      white-space: pre-wrap;
-    }
-
-    .review-time {
-      margin-top: 6px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    .empty-state {
-      font-size: 14.5px;
-      color: #94a3b8;
-      padding: 14px 0;
+      margin-bottom: 4px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header class="header">
-      <div class="lesson-pill">8-сынып Физика • «Денелердің электрленуі. Электр заряды. Өткізгіштер мен диэлектриктер»</div>
-      <h1>Рефлексия</h1>
-      <p>Бүгінгі ашық сабақ туралы өз әсеріңізбен және әдістемелік ұсынысыңызбен бөлісіңіз</p>
-    </header>
+    <h1>8-сынып физика — Сабақ соңындағы рефлексия</h1>
+    <p class="subtitle">Бүгінгі сабақ бойынша түсінгеніңіз бен сұрақтарыңызды бөлісіңіз.</p>
 
-    <form id="feedbackForm" onsubmit="submitFeedback(event)">
-      <div class="form-group">
-        <label class="form-label" for="colleagueName">Аты-жөніңіз (қалауыңызша):</label>
-        <input
-          type="text"
-          id="colleagueName"
-          class="text-input"
-          placeholder="Мысалы: Айгүл ханым немесе Арман ағай"
-        />
+    <form id="reflectionForm">
+      <div class="question-block">
+        <label for="studentName">Оқушының аты-жөні</label>
+        <input type="text" id="studentName" placeholder="Мысалы: Әлихан Сәрсенов" required>
       </div>
 
-      <div class="rating-group">
-        <label class="form-label">Сабақ бойынша әсеріңіз бен көңіл-күйіңізді бағалаңыз:</label>
-        <div class="stars-row" id="starsRow">
-          <button type="button" class="star-btn" data-val="1" aria-label="1 жұлдыз">★</button>
-          <button type="button" class="star-btn" data-val="2" aria-label="2 жұлдыз">★</button>
-          <button type="button" class="star-btn" data-val="3" aria-label="3 жұлдыз">★</button>
-          <button type="button" class="star-btn" data-val="4" aria-label="4 жұлдыз">★</button>
-          <button type="button" class="star-btn" data-val="5" aria-label="5 жұлдыз">★</button>
+      <div class="question-block">
+        <label>Сабақты қалай меңгердіңіз?</label>
+        <div class="mood-group" id="moodGroup">
+          <button type="button" class="mood-btn" data-value="Толық түсіндім">Толық түсіндім</button>
+          <button type="button" class="mood-btn" data-value="Сұрақтарым бар">Сұрақтарым бар</button>
+          <button type="button" class="mood-btn" data-value="Қайталау керек">Қайталау керек</button>
         </div>
-        <div class="rating-caption" id="ratingCaption"></div>
+        <input type="hidden" id="understandingLevel" value="">
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="feedbackText">Бүгінгі сабақтан алған әсеріңіз немесе ұсынысыңыз:</label>
-        <textarea
-          id="feedbackText"
-          class="textarea-input"
-          placeholder="Бүгінгі сабақта маған ерекше ұнағаны..."
-        ></textarea>
+      <div class="question-block">
+        <label for="learnedText">Бүгін не үйрендіңіз?</label>
+        <textarea id="learnedText" placeholder="Негізгі ұғымдарды немесе мысалдарды жазыңыз..."></textarea>
       </div>
 
-      <button type="submit" class="submit-btn">Кері байланысты жіберу</button>
-      <div class="toast-msg" id="toastMsg"></div>
+      <div class="question-block">
+        <label for="questionText">Қандай сұрақ немесе қиындық туындады?</label>
+        <textarea id="questionText" placeholder="Түсініксіз тұсы болса, осында жазыңыз..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Жауапты сақтау</button>
+      <div id="statusMessage" class="message"></div>
     </form>
 
-    <section class="reviews-section">
-      <div class="reviews-header">
-        <h2>Әріптестердің пікірлері:</h2>
-        <div class="reviews-meta">
-          <span class="count-chip" id="reviewsCount">Барлығы: 0 пікір</span>
-          <button type="button" class="clear-btn" onclick="clearAllReviews()">Тазалау</button>
-        </div>
-      </div>
-      <div class="reviews-list" id="reviewsList"></div>
-    </section>
+    <div class="history-section">
+      <h2>Осы құрылғыда сақталған жауаптар</h2>
+      <div id="entriesList"></div>
+    </div>
   </div>
 
   <script>
-    const STORAGE_KEY = 'fizika_8_electrification_colleague_feedback_v1';
-    const RATING_LABELS = {
-      1: '1 / 5 — Төмен',
-      2: '2 / 5 — Орташадан төмен',
-      3: '3 / 5 — Жақсы',
-      4: '4 / 5 — Өте жақсы',
-      5: '5 / 5 — Керемет әсер алдым!'
-    };
+    const STORAGE_KEY = "fizika_8_refleksiya_entries";
+    const form = document.getElementById("reflectionForm");
+    const moodButtons = document.querySelectorAll(".mood-btn");
+    const levelInput = document.getElementById("understandingLevel");
+    const statusMessage = document.getElementById("statusMessage");
+    const entriesList = document.getElementById("entriesList");
 
-    let selectedRating = 0;
-
-    const starBtns = document.querySelectorAll('.star-btn');
-    starBtns.forEach(btn => {
-      btn.addEventListener('mouseenter', () => {
-        highlightStars(Number(btn.dataset.val));
-      });
-      btn.addEventListener('mouseleave', () => {
-        highlightStars(selectedRating);
-      });
-      btn.addEventListener('click', () => {
-        selectedRating = Number(btn.dataset.val);
-        highlightStars(selectedRating);
-        document.getElementById('ratingCaption').textContent = RATING_LABELS[selectedRating] || '';
+    moodButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        moodButtons.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+        levelInput.value = button.dataset.value;
       });
     });
 
-    function highlightStars(count) {
-      starBtns.forEach(btn => {
-        btn.classList.toggle('active', Number(btn.dataset.val) <= count);
-      });
-    }
-
-    function loadReviews() {
+    function getEntries() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         return raw ? JSON.parse(raw) : [];
-      } catch (e) {
+      } catch (error) {
         return [];
       }
     }
 
-    function saveReviews(list) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      } catch (e) {}
+    function saveEntries(entries) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }
 
-    function escapeHTML(str) {
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    function renderReviews() {
-      const reviews = loadReviews();
-      const listEl = document.getElementById('reviewsList');
-      const countEl = document.getElementById('reviewsCount');
-
-      countEl.textContent = `Барлығы: ${reviews.length} пікір`;
-
-      if (reviews.length === 0) {
-        listEl.innerHTML = '<div class="empty-state">Әзірге пікірлер жазылмады. Бірінші болып өз әсеріңізбен бөлісіңіз!</div>';
+    function renderEntries() {
+      const entries = getEntries();
+      if (entries.length === 0) {
+        entriesList.innerHTML = "<p class=\"subtitle\">Әзірге жауаптар сақталмаған.</p>";
         return;
       }
 
-      listEl.innerHTML = reviews.map(item => {
-        const starsStr = item.rating > 0
-          ? '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating)
-          : '';
-        return `
-          <article class="review-card">
-            <div class="review-top">
-              <span class="review-author">${escapeHTML(item.name)}</span>
-              ${starsStr ? `<span class="review-stars">${starsStr}</span>` : ''}
+      entriesList.innerHTML = entries
+        .map((entry) => {
+          return `
+            <div class="entry-card">
+              <div class="entry-meta">${escapeHtml(entry.name)} — ${escapeHtml(entry.level)} (${escapeHtml(entry.date)})</div>
+              <div><strong>Үйрендім:</strong> ${escapeHtml(entry.learned || "—")}</div>
+              <div><strong>Сұрақ:</strong> ${escapeHtml(entry.question || "—")}</div>
             </div>
-            <div class="review-body">${escapeHTML(item.text)}</div>
-            <div class="review-time">${escapeHTML(item.time)}</div>
-          </article>
-        `;
-      }).join('');
+          `;
+        })
+        .join("");
     }
 
-    function showToast(message, isError = false) {
-      const toast = document.getElementById('toastMsg');
-      toast.textContent = message;
-      toast.className = `toast-msg ${isError ? 'error' : 'success'}`;
-      setTimeout(() => {
-        toast.style.display = 'none';
-        toast.className = 'toast-msg';
-      }, 3500);
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
     }
 
-    function submitFeedback(e) {
-      e.preventDefault();
-      const nameInput = document.getElementById('colleagueName');
-      const textInput = document.getElementById('feedbackText');
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
 
-      const name = nameInput.value.trim() || 'Әріптес мұғалім';
-      const text = textInput.value.trim();
+      const name = document.getElementById("studentName").value.trim();
+      const level = levelInput.value.trim();
+      const learned = document.getElementById("learnedText").value.trim();
+      const question = document.getElementById("questionText").value.trim();
 
-      if (!text) {
-        showToast('Өтінеміз, сабақ туралы пікіріңізді немесе ұсынысыңызды жазыңыз.', true);
-        textInput.focus();
+      if (!name || !level) {
+        statusMessage.textContent = "Аты-жөніңізді жазып, сабақты меңгеру деңгейін таңдаңыз.";
+        statusMessage.className = "message error";
         return;
       }
 
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) +
-        ' • ' + now.toLocaleDateString('kk-KZ');
-
-      const reviews = loadReviews();
-      reviews.unshift({
-        name,
-        rating: selectedRating,
-        text,
-        time: timeStr
+      const entries = getEntries();
+      entries.unshift({
+        name: name,
+        level: level,
+        learned: learned,
+        question: question,
+        date: new Date().toLocaleString("kk-KZ")
       });
-      saveReviews(reviews);
 
-      nameInput.value = '';
-      textInput.value = '';
-      selectedRating = 0;
-      highlightStars(0);
-      document.getElementById('ratingCaption').textContent = '';
+      saveEntries(entries);
+      renderEntries();
 
-      renderReviews();
-      showToast('Рақмет! Сіздің кері байланысыңыз сәтті қосылды.');
-    }
+      statusMessage.textContent = "Жауабыңыз сәтті сақталды!";
+      statusMessage.className = "message success";
 
-    function clearAllReviews() {
-      const reviews = loadReviews();
-      if (reviews.length === 0) return;
-      localStorage.removeItem(STORAGE_KEY);
-      renderReviews();
-    }
+      form.reset();
+      levelInput.value = "";
+      moodButtons.forEach((btn) => btn.classList.remove("active"));
+    });
 
-    renderReviews();
+    renderEntries();
   </script>
 </body>
 </html>
