@@ -335,28 +335,11 @@
     </section>
   </div>
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      getDocs,
-      query,
-      orderBy,
-      serverTimestamp
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCPerbz5nWsWizN7UHs3-UNDveZR-THXxg",
-      authDomain: "fizika-8-refleksiya-18d5b.firebaseapp.com",
-      projectId: "fizika-8-refleksiya-18d5b",
-      storageBucket: "fizika-8-refleksiya-18d5b.firebasestorage.app",
-      messagingSenderId: "881925256637",
-      appId: "1:881925256637:web:8d5c16361b858d03970ed4"
-    };
-
+  <script>
+    const PROJECT_ID = 'fizika-8-refleksiya-18d5b';
     const COLLECTION_NAME = 'fizika_8_colleague_feedbacks';
+    const FIRESTORE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${COLLECTION_NAME}`;
+
     const RATING_LABELS = {
       1: '1 / 5 — Төмен',
       2: '2 / 5 — Орташадан төмен',
@@ -364,9 +347,6 @@
       4: '4 / 5 — Өте жақсы',
       5: '5 / 5 — Керемет әсер алдым!'
     };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
 
     let selectedRating = 0;
 
@@ -399,15 +379,6 @@
         .replace(/"/g, '&quot;');
     }
 
-    function formatTime(createdAt, fallbackTime) {
-      if (createdAt && typeof createdAt.toDate === 'function') {
-        const d = createdAt.toDate();
-        return d.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) +
-          ' • ' + d.toLocaleDateString('kk-KZ');
-      }
-      return fallbackTime || '';
-    }
-
     function showToast(message, isError = false) {
       const toast = document.getElementById('toastMsg');
       toast.textContent = message;
@@ -419,14 +390,29 @@
       }, 3500);
     }
 
+    function parseDoc(doc) {
+      const f = doc.fields || {};
+      return {
+        name: (f.name && f.name.stringValue) || 'Әріптес мұғалім',
+        rating: Number((f.rating && f.rating.integerValue) || 0),
+        text: (f.text && f.text.stringValue) || '',
+        timeText: (f.timeText && f.timeText.stringValue) || '',
+        createdAtMs: Number((f.createdAtMs && f.createdAtMs.integerValue) || 0)
+      };
+    }
+
     async function renderReviews() {
       const listEl = document.getElementById('reviewsList');
       const countEl = document.getElementById('reviewsCount');
 
       try {
-        const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const reviews = snapshot.docs.map(doc => doc.data());
+        const res = await fetch(FIRESTORE_URL + '?pageSize=100');
+        if (!res.ok) {
+          throw new Error('HTTP ' + res.status);
+        }
+        const data = await res.json();
+        const docs = Array.isArray(data.documents) ? data.documents : [];
+        const reviews = docs.map(parseDoc).sort((a, b) => b.createdAtMs - a.createdAtMs);
 
         countEl.textContent = `Барлығы: ${reviews.length} пікір`;
 
@@ -447,7 +433,7 @@
                 ${starsStr ? `<span class="review-stars">${starsStr}</span>` : ''}
               </div>
               <div class="review-body">${escapeHTML(item.text || '')}</div>
-              <div class="review-time">${escapeHTML(formatTime(item.createdAt, item.timeText))}</div>
+              <div class="review-time">${escapeHTML(item.timeText || '')}</div>
             </article>
           `;
         }).join('');
@@ -478,4 +464,45 @@
 
       const now = new Date();
       const timeText = now.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) +
-        ' • ' + now.to
+        ' • ' + now.toLocaleDateString('kk-KZ');
+
+      const payload = {
+        fields: {
+          name: { stringValue: name },
+          rating: { integerValue: String(selectedRating) },
+          text: { stringValue: text },
+          timeText: { stringValue: timeText },
+          createdAtMs: { integerValue: String(Date.now()) }
+        }
+      };
+
+      try {
+        const res = await fetch(FIRESTORE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          throw new Error('HTTP ' + res.status);
+        }
+
+        nameInput.value = '';
+        textInput.value = '';
+        selectedRating = 0;
+        highlightStars(0);
+        document.getElementById('ratingCaption').textContent = '';
+
+        await renderReviews();
+        showToast('Рақмет! Сіздің кері байланысыңыз ортақ тізімге қосылды.');
+      } catch (err) {
+        showToast('Сақтау кезінде қате шықты. Firestore ережелерін тексеріңіз.', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Кері байланысты жіберу';
+      }
+    });
+
+    renderReviews();
+  </script>
+</body>
+</html>
